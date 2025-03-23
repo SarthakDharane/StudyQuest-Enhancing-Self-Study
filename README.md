@@ -31,8 +31,11 @@ py app.py
 *N.E.R.V*
 
 Hrishikesh Gavai
+
 Siddhesh Gite
+
 Sarthak Dharane
+
 Sahil Ghongate
 
 S. Y. BTech Computer Engineering, KKWIEER.
