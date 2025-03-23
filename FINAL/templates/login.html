@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Begin Your Quest | Study Quest</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e;
+            background-image: url('/api/placeholder/800/600');
+            background-size: cover;
+            background-position: center;
+            color: #e6e6e6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .login-container {
+            background-color: rgba(30, 30, 60, 0.8);
+            border-radius: 15px;
+            border: 2px solid #6a5acd;
+            box-shadow: 0 0 30px #6a5acd, 0 0 15px #9370db inset;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+        
+        h2 {
+            color: #9370db;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-shadow: 0 0 10px #6a5acd;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-top: 15px;
+            margin-bottom: 8px;
+            text-align: left;
+            font-weight: bold;
+            color: #9370db;
+        }
+        
+        input {
+            padding: 12px;
+            border: 2px solid #6a5acd;
+            border-radius: 8px;
+            background-color: rgba(20, 20, 40, 0.6);
+            color: #e6e6e6;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #9370db;
+            box-shadow: 0 0 10px #9370db;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(106, 90, 205, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .character {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-image: url('/api/placeholder/100/100');
+            background-size: cover;
+            bottom: -50px;
+            right: -50px;
+            opacity: 0.7;
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(147, 112, 219, 0.5);
+            border-radius: 50%;
+            width: 5px;
+            height: 5px;
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px);
+                opacity: 1;
+            }
+        }
+        
+        .title-decoration {
+            display: inline-block;
+            margin: 0 10px;
+            font-size: 24px;
+            color: #9370db;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="login-container">
+        <h2><span class="title-decoration">✦</span> Begin Your Adventure <span class="title-decoration">✦</span></h2>
+        <form id="loginForm" method="POST" action="/login">
+            <label for="email">Scholar's Scroll (Email):</label>
+            <input type="email" id="email" name="email" required placeholder="your_scroll@realm.com">
+        
+            <label for="password">Secret Incantation (Password):</label>
+            <input type="password" id="password" name="password" required placeholder="••••••••">
+        
+            <button type="submit" id="loginButton">Embark on Quest</button>
+        </form>
+                Embark on Quest
+            </button>
+        </form>
+        <div class="character"></div>
+    </div>
+
+    <script>
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.width = `${Math.random() * 8 + 2}px`;
+            particle.style.height = particle.style.width;
+            particle.style.opacity = Math.random() * 0.5;
+            particle.style.animationDuration = `${Math.random() * 4 + 2}s`;
+            particle.style.animationDelay = `${Math.random() * 2}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        // Button effects
+        const loginButton = document.getElementById('loginButton');
+        loginButton.addEventListener('mouseenter', function() {
+            this.innerHTML = "⚔️ Embark on Quest ⚔️";
+        });
+        
+        loginButton.addEventListener('mouseleave', function() {
+            this.innerHTML = "Embark on Quest";
+        });
+
+        // Form submission
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); 
+            
+            // Add login animation
+            loginButton.innerHTML = "Casting Spell...";
+            loginButton.disabled = true;
+            
+            // Simulate loading
+            setTimeout(function() {
+                window.location.href = "/home"
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

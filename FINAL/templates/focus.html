@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkey Focus Mode</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            transition: background-color 0.5s;
+        }
+        
+        body.focus-active {
+            background-color: #e8f4f8;
+        }
+        
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            transition: all 0.5s;
+        }
+        
+        .container.focus-active {
+            box-shadow: 0 6px 25px rgba(52, 152, 219, 0.3);
+        }
+        
+        h1 {
+            margin-top: 0;
+            color: #333;
+            font-size: 28px;
+        }
+        
+        .monkey-container {
+            position: relative;
+            height: 200px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .monkey {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+            transition: transform 0.8s ease-in-out;
+        }
+        
+        .monkey-eating, .monkey-studying {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: opacity 0.8s ease-in-out;
+        }
+        
+        .monkey-eating {
+            background-image: url('/api/placeholder/200/200');
+            /* In real implementation, use actual monkey eating image */
+            opacity: 1;
+        }
+        
+        .monkey-studying {
+            background-image: url('/api/placeholder/200/200');
+            /* In real implementation, use actual monkey studying image */
+            opacity: 0;
+        }
+        
+        .focus-active .monkey-eating {
+            opacity: 0;
+        }
+        
+        .focus-active .monkey-studying {
+            opacity: 1;
+        }
+        
+        .banana {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #ffd700;
+            border-radius: 50% 50% 50% 5px;
+            transform: rotate(-45deg);
+            top: 50px;
+            left: 80px;
+            opacity: 1;
+            transition: all 0.5s;
+        }
+        
+        .focus-active .banana {
+            opacity: 0;
+            transform: rotate(-45deg) translate(-50px, 50px);
+        }
+        
+        .book {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            background-color: #3498db;
+            border-radius: 5px;
+            bottom: 40px;
+            right: 80px;
+            transform: rotate(0deg) scale(0);
+            opacity: 0;
+            transition: all 0.5s 0.3s;
+        }
+        
+        .book:after {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 2px;
+        }
+        
+        .book:before {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 5px;
+            right: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 2px;
+        }
+        
+        .focus-active .book {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+        
+        .status {
+            margin: 20px 0;
+            font-size: 20px;
+            font-weight: bold;
+            height: 30px;
+        }
+        
+        .active {
+            color: #27ae60;
+        }
+        
+        .inactive {
+            color: #7f8c8d;
+        }
+        
+        .countdown {
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #555;
+            height: 20px;
+        }
+        
+        /* Toggle Switch */
+        .switch-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 80px;
+            height: 40px;
+            margin: 0 15px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 40px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 32px;
+            width: 32px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #27ae60;
+        }
+        
+        input:focus + .slider {
+            box-shadow: 0 0 1px #27ae60;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(40px);
+        }
+        
+        .toggle-label {
+            font-weight: 600;
+            font-size: 18px;
+            color: #555;
+        }
+        
+        /* Animation effects */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+        
+        .focus-active .monkey {
+            animation: bounce 1s;
+        }
+        
+        .mode-text-eating, .mode-text-studying {
+            transition: opacity 0.5s;
+        }
+        
+        .mode-text-studying {
+            opacity: 0;
+            display: none;
+        }
+        
+        .focus-active .mode-text-eating {
+            opacity: 0;
+            display: none;
+        }
+        
+        .focus-active .mode-text-studying {
+            opacity: 1;
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="focusContainer">
+        <h1>Monkey Focus Mode</h1>
+        
+        <div class="monkey-container">
+            <div class="monkey">
+                <div class="monkey-eating">
+                    <!-- Visual representation of monkey eating -->
+                    <div style="width: 120px; height: 120px; background-color: #8B4513; border-radius: 60px; margin: 0 auto; position: relative;">
+                        <!-- Ears -->
+                        <div style="width: 40px; height: 40px; background-color: #8B4513; border-radius: 50%; position: absolute; top: -15px; left: -5px;"></div>
+                        <div style="width: 40px; height: 40px; background-color: #8B4513; border-radius: 50%; position: absolute; top: -15px; right: -5px;"></div>
+                        
+                        <!-- Face -->
+                        <div style="width: 100px; height: 80px; background-color: #D2B48C; border-radius: 50px; position: absolute; top: 30px; left: 10px;"></div>
+                        
+                        <!-- Eyes -->
+                        <div style="width: 15px; height: 15px; background-color: #000; border-radius: 50%; position: absolute; top: 50px; left: 30px;"></div>
+                        <div style="width: 15px; height: 15px; background-color: #000; border-radius: 50%; position: absolute; top: 50px; right: 30px;"></div>
+                        
+                        <!-- Mouth Eating -->
+                        <div style="width: 40px; height: 20px; background-color: #A52A2A; border-radius: 0 0 20px 20px; position: absolute; top: 75px; left: 40px;"></div>
+                    </div>
+                </div>
+                <div class="monkey-studying">
+                    <!-- Visual representation of monkey studying -->
+                    <div style="width: 120px; height: 120px; background-color: #8B4513; border-radius: 60px; margin: 0 auto; position: relative;">
+                        <!-- Ears -->
+                        <div style="width: 40px; height: 40px; background-color: #8B4513; border-radius: 50%; position: absolute; top: -15px; left: -5px;"></div>
+                        <div style="width: 40px; height: 40px; background-color: #8B4513; border-radius: 50%; position: absolute; top: -15px; right: -5px;"></div>
+                        
+                        <!-- Face -->
+                        <div style="width: 100px; height: 80px; background-color: #D2B48C; border-radius: 50px; position: absolute; top: 30px; left: 10px;"></div>
+                        
+                        <!-- Eyes - focused/concentrated -->
+                        <div style="width: 18px; height: 15px; background-color: #000; border-radius: 50%; position: absolute; top: 50px; left: 30px;"></div>
+                        <div style="width: 18px; height: 15px; background-color: #000; border-radius: 50%; position: absolute; top: 50px; right: 30px;"></div>
+                        
+                        <!-- Glasses -->
+                        <div style="width: 75px; height: 20px; border: 2px solid #333; border-radius: 10px; position: absolute; top: 48px; left: 22px;"></div>
+                        
+                        <!-- Mouth Concentrating -->
+                        <div style="width: 20px; height: 5px; background-color: #000; position: absolute; top: 85px; left: 50px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Props that animate -->
+            <div class="banana"></div>
+            <div class="book"></div>
+        </div>
+        
+        <div class="status" id="status">
+            <span class="inactive">
+                <span class="mode-text-eating">Monkey is distracted!</span>
+                <span class="mode-text-studying">Monkey is focusing!</span>
+            </span>
+        </div>
+        
+        <div class="countdown" id="countdown"></div>
+        
+        <div class="switch-container">
+            <span class="toggle-label">Distracted</span>
+            <label class="switch">
+                <input type="checkbox" id="focusToggle">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Focused</span>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const containerElement = document.getElementById('focusContainer');
+        const bodyElement = document.body;
+        const statusElement = document.getElementById('status');
+        const countdownElement = document.getElementById('countdown');
+        const toggleElement = document.getElementById('focusToggle');
+        
+        // State
+        let focusModeActive = false;
+        let autoOffTime = null;
+        let countdownInterval = null;
+        let redirectTimeout = null;
+        
+        // Update the UI based on focus mode state
+        function updateUI() {
+            if (focusModeActive) {
+                containerElement.classList.add('focus-active');
+                bodyElement.classList.add('focus-active');
+                statusElement.innerHTML = '<span class="active"><span class="mode-text-eating">Monkey is distracted!</span><span class="mode-text-studying">Monkey is focusing!</span></span>';
+                
+                // Set up redirect after 1 second when focus mode is enabled
+                if (redirectTimeout) clearTimeout(redirectTimeout);
+                redirectTimeout = setTimeout(() => {
+                    window.location.href = '/home';
+                }, 1000);
+                
+                if (autoOffTime) {
+                    updateCountdown();
+                    // Start countdown timer
+                    if (countdownInterval) clearInterval(countdownInterval);
+                    countdownInterval = setInterval(updateCountdown, 1000);
+                }
+            } else {
+                containerElement.classList.remove('focus-active');
+                bodyElement.classList.remove('focus-active');
+                statusElement.innerHTML = '<span class="inactive"><span class="mode-text-eating">Monkey is distracted!</span><span class="mode-text-studying">Monkey is focusing!</span></span>';
+                countdownElement.textContent = '';
+                
+                // Clear redirect timeout if focus mode is disabled
+                if (redirectTimeout) {
+                    clearTimeout(redirectTimeout);
+                    redirectTimeout = null;
+                }
+                
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+            }
+        }
+        
+        // Update countdown display
+        function updateCountdown() {
+            if (!autoOffTime) return;
+            
+            const now = new Date();
+            const endTime = new Date(autoOffTime);
+            const timeLeft = endTime - now;
+            
+            if (timeLeft <= 0) {
+                // Focus mode timed out
+                focusModeActive = false;
+                toggleElement.checked = false;
+                autoOffTime = null;
+                updateUI();
+                return;
+            }
+            
+            // Format remaining time
+            const minutes = Math.floor(timeLeft / 60000);
+            const seconds = Math.floor((timeLeft % 60000) / 1000);
+            countdownElement.textContent = `Study session ends in ${minutes}m ${seconds}s`;
+        }
+        
+        // Fetch initial focus mode status
+        async function fetchInitialStatus() {
+            try {
+                const response = await fetch('/api/focus-mode/status');
+                const data = await response.json();
+                
+                focusModeActive = data.is_active;
+                toggleElement.checked = focusModeActive;
+                
+                if (data.auto_off_time) {
+                    const today = new Date();
+                    const [hours, minutes, seconds] = data.auto_off_time.split(':').map(Number);
+                    
+                    autoOffTime = new Date();
+                    autoOffTime.setHours(hours, minutes, seconds);
+                    
+                    // If the time is earlier than now (passed), assume it's for tomorrow
+                    if (autoOffTime < today) {
+                        autoOffTime.setDate(autoOffTime.getDate() + 1);
+                    }
+                }
+                
+                updateUI();
+                
+                // If focus mode is already active on page load, redirect after 1 second
+                if (focusModeActive) {
+                    redirectTimeout = setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Error fetching focus mode status:', error);
+            }
+        }
+        
+        // Toggle focus mode
+        async function toggleFocusMode() {
+            try {
+                const response = await fetch('/api/focus-mode/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    focusModeActive = data.is_active;
+                    
+                    if (data.auto_off_time) {
+                        const today = new Date();
+                        const [hours, minutes, seconds] = data.auto_off_time.split(':').map(Number);
+                        
+                        autoOffTime = new Date();
+                        autoOffTime.setHours(hours, minutes, seconds);
+                        
+                        // If the time is earlier than now (passed), assume it's for tomorrow
+                        if (autoOffTime < today) {
+                            autoOffTime.setDate(autoOffTime.getDate() + 1);
+                        }
+                    } else {
+                        autoOffTime = null;
+                    }
+                    
+                    updateUI();
+                } else {
+                    // Reset toggle to match actual state if there was an error
+                    toggleElement.checked = focusModeActive;
+                    console.error('Error toggling focus mode:', data.message);
+                }
+            } catch (error) {
+                console.error('Error toggling focus mode:', error);
+                // Reset toggle to match actual state
+                toggleElement.checked = focusModeActive;
+            }
+        }
+        
+        // Event listeners
+        toggleElement.addEventListener('change', toggleFocusMode);
+        
+        // Initialize
+        fetchInitialStatus();
+    </script>
+</body>
+</html>

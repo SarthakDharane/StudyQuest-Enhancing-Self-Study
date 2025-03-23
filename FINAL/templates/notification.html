@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notification UI Template</title>
+  <style>
+    :root {
+      --success: #4CAF50;
+      --error: #F44336;
+      --warning: #FF9800;
+      --info: #2196F3;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .notifications-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 90%;
+      display: flex;
+      align-self: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .notification {
+      padding: 16px;
+      border-radius: 8px;
+      background-color: white;
+      box-shadow: var(--shadow);
+      display: flex;
+      position: relative;
+      animation: slideIn 0.4s ease-out;
+      transform-origin: top right;
+    }
+    
+    .notification__icon {
+      margin-right: 12px;
+      display: flex;
+      align-items: flex-start;
+      font-size: 20px;
+    }
+    
+    .notification__content {
+      flex: 1;
+    }
+    
+    .notification__title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    
+    .notification__message {
+      color: #555;
+      font-size: 14px;
+    }
+    
+    .notification__close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      color: #777;
+      line-height: 1;
+      padding: 4px;
+    }
+    
+    /* Notification Types */
+    .notification--success {
+      border-left: 4px solid var(--success);
+    }
+    
+    .notification--success .notification__icon {
+      color: var(--success);
+    }
+    
+    .notification--error {
+      border-left: 4px solid var(--error);
+    }
+    
+    .notification--error .notification__icon {
+      color: var(--error);
+    }
+    
+    .notification--warning {
+      border-left: 4px solid var(--warning);
+    }
+    
+    .notification--warning .notification__icon {
+      color: var(--warning);
+    }
+    
+    .notification--info {
+      border-left: 4px solid var(--info);
+    }
+    
+    .notification--info .notification__icon {
+      color: var(--info);
+    }
+    
+    /* Animations */
+    @keyframes slideIn {
+      0% {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .notifications-container {
+        left: 20px;
+        right: 20px;
+        max-width: none;
+      }
+      
+      .notification {
+        padding: 12px;
+      }
+      
+      .notification__title {
+        font-size: 15px;
+      }
+      
+      .notification__message {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="notifications-container">
+    <div class="notification notification--success">
+      <div class="notification__icon">✓</div>
+      <div class="notification__content">
+        <h3 class="notification__title">Achievement Unlocked !</h3>
+        <p class="notification__message">You earned a Silver Badge for completing the course.</p>
+      </div>
+      <button class="notification__close">&times;</button>
+    </div>
+    
+    <div class="notification notification--error">
+      <div class="notification__icon">✕</div>
+      <div class="notification__content">
+        <h3 class="notification__title">Test Missed !</h3>
+        <p class="notification__message">You missed test on DSA.</p>
+      </div>
+      <button class="notification__close">&times;</button>
+    </div>
+    
+    <div class="notification notification--warning">
+      <div class="notification__icon">!</div>
+      <div class="notification__content">
+        <h3 class="notification__title">Warning</h3>
+        <p class="notification__message">You missed your daily streak.</p>
+      </div>
+      <button class="notification__close">&times;</button>
+    </div>
+    
+    <div class="notification notification--info">
+      <div class="notification__icon">i</div>
+      <div class="notification__content">
+        <h3 class="notification__title">Information</h3>
+        <p class="notification__message">A new version of the application is available.</p>
+      </div>
+      <button class="notification__close">&times;</button>
+    </div>
+
+  <div class="notification notification--warning">
+    <div class="notification__icon">!</div>
+    <div class="notification__content">
+      <h3 class="notification__title">Warning</h3>
+      <p class="notification__message">Complete your assignment in given time.</p>
+    </div>
+    <button class="notification__close">&times;</button>
+  </div>
+</div>
+</body>
+</html>
