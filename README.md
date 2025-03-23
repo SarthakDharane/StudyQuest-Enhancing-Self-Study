@@ -12,3 +12,27 @@ The system integrates external resources like YouTube to provide diverse, high-q
 
 
 With most core features completed and fully functional, the platform exhibits technical maturity and innovation. With its cross-domain character, combining AI, learning, and multimedia, it becomes feasible and possesses a clear development path for scalability and practical usage in the real world.
+
+
+## *🔥 How To Run? 🎴*
+
+1. Install Virtual Studio Code and setup Python.
+2. Setup the required libraries.
+3. Get the API keys for Google Gemini and YouTube.
+4. Then just download the files and run the codes in the "Terminal" with this commands:
+
+```
+py app.py
+```
+
+
+## *🔥 Credits 🎴*
+
+*N.E.R.V*
+
+Hrishikesh Gavai
+Siddhesh Gite
+Sarthak Dharane
+Sahil Ghongate
+
+S. Y. BTech Computer Engineering, KKWIEER.
