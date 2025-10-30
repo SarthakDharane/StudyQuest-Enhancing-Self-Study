@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Plan - Schedule Generator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6a3de8;
+            --secondary: #ff7b5c;
+            --accent: #ffd23f;
+            --background: #f0f7ff;
+            --dark: #2a3140;
+            --card-bg: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            background-image: url('/api/placeholder/1200/600');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        
+        .game-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        h2 {
+            color: var(--primary);
+            font-size: 28px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2 i {
+            margin-right: 15px;
+            color: var(--secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 61, 232, 0.2);
+        }
+        
+        .icon-input {
+            position: relative;
+        }
+        
+        .icon-input i {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            color: #9da7b9;
+        }
+        
+        .icon-input input {
+            padding-left: 45px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, var(--primary), #9370DB);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(106, 61, 232, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Schedule Display */
+        .schedule-container {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease-out;
+        }
+        
+        .schedule-container.active {
+            opacity: 1;
+            height: auto;
+            margin-top: 30px;
+        }
+        
+        .schedule-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(45deg, var(--primary), #9370DB);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            font-weight: 600;
+        }
+        
+        .schedule-title .exp {
+            background-color: var(--accent);
+            padding: 5px 10px;
+            border-radius: 20px;
+            color: var(--dark);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .exp i {
+            margin-right: 5px;
+        }
+        
+        .schedule-list {
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+        }
+        
+        .schedule-entry {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eaedf3;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+        
+        .schedule-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .schedule-entry:hover {
+            background-color: #f8f9fd;
+        }
+        
+        .time-badge {
+            background-color: #e0e7ff;
+            color: var(--primary);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-weight: 600;
+            margin-right: 15px;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .activity {
+            flex: 1;
+        }
+        
+        .activity-tag {
+            display: inline-block;
+            background-color: #f0f7ff;
+            color: var(--primary);
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        
+        .complete-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #d0d7e2;
+            background: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 15px;
+        }
+        
+        .complete-btn:hover {
+            border-color: var(--primary);
+            background-color: rgba(106, 61, 232, 0.1);
+        }
+        
+        .complete-btn.done {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            position: relative;
+        }
+        
+        .complete-btn.done::after {
+            content: "✓";
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e7ff;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s ease-out;
+        }
+        
+        .achievement {
+            position: fixed;
+            top: 30px;
+            right: -300px;
+            background-color: var(--dark);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            transition: right 0.5s ease-out;
+            z-index: 1000;
+        }
+        
+        .achievement.show {
+            right: 30px;
+        }
+        
+        .achievement-icon {
+            background-color: var(--accent);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .achievement-text {
+            flex: 1;
+        }
+        
+        .achievement-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .level-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .level-badge {
+            background-color: var(--accent);
+            color: var(--dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+        
+        .level-text {
+            font-weight: 600;
+        }
+        
+        .time-fields {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .time-fields .form-group {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 15px auto;
+            }
+            
+            .time-fields {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-card">
+            <h2><i class="fas fa-book-open"></i> AI Journal</h2>
+            
+            <div class="level-indicator">
+                <div class="level-badge">1</div>
+                <div class="level-text">Study Apprentice</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:25%"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="topic">What are you studying today?</label>
+                <div class="icon-input">
+                    <i class="fas fa-graduation-cap"></i>
+                    <input type="text" id="topic" placeholder="Enter Topic (e.g., Data Structures & Algorithms)">
+                </div>
+            </div>
+            
+            <div class="time-fields">
+                <div class="form-group">
+                    <label for="startTime">Start Time</label>
+                    <div class="icon-input">
+                        <i class="fas fa-hourglass-start"></i>
+                        <input type="time" id="startTime">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="endTime">End Time</label>
+                    <div class="icon-input">
+                        <i class="fas fa-hourglass-end"></i>
+                        <input type="time" id="endTime">
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="generateSchedule()">
+                <i class="fas fa-wand-magic-sparkles"></i> Generate Quest
+            </button>
+        </div>
+
+        <a href="/home" class="btn" style="margin-top: 10px; display: inline-block;"><button class="action-button">
+            ⬅️ Return to Base
+        </button></a>
+        
+        <div id="scheduleContainer" class="schedule-container"></div>
+    </div>
+
+    <div class="achievement" id="achievement">
+        <div class="achievement-icon">
+            <i class="fas fa-trophy"></i>
+        </div>
+        <div class="achievement-text">
+            <div class="achievement-title">Achievement Unlocked!</div>
+            <div class="achievement-desc">Schedule Master</div>
+        </div>
+    </div>
+    
+    <script>
+        let completedTasks = 0;
+        let totalTasks = 0;
+        let xp = 0;
+        
+        function generateSchedule() {
+            const topic = $('#topic').val();
+            const start = $('#startTime').val();
+            const end = $('#endTime').val();
+            
+            if (!topic || !start || !end) {
+                alert("Please fill all fields to begin your quest!");
+                return;
+            }
+            
+            // Show loading animation
+            $('#scheduleContainer').html('<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Creating your study quest...</p></div>');
+            $('#scheduleContainer').addClass('active');
+            
+            // Simulate XP gain
+            xp += 50;
+            showAchievement("Quest Created!", "You earned 50 XP");
+            
+            $.ajax({
+                url: '/generate_schedule',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ topic: topic, start_time: start, end_time: end }),
+                success: function (response) {
+                    const schedule = response.schedule;
+                    totalTasks = schedule.length;
+                    completedTasks = 0;
+                    
+                    let html = `
+                        <div class="game-card">
+                            <div class="schedule-title">
+                                <span>${response.topic} Quest</span>
+                                <span class="exp"><i class="fas fa-star"></i> ${xp} XP</span>
+                            </div>
+                            <div class="schedule-list">
+                    `;
+                    
+                    schedule.forEach((item, index) => {
+                        const tags = getRandomTags();
+                        html += `
+                            <div class="schedule-entry" data-id="${index}">
+                                <div class="time-badge">${item.time}</div>
+                                <div class="activity">
+                                    ${item.activity}
+                                    <div class="activity-tag">${tags}</div>
+                                </div>
+                                <button class="complete-btn" onclick="markComplete(${index}, this)"></button>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="scheduleProgress" style="width:0%"></div>
+                        </div>
+                        <div style="text-align:right">
+                            <button class="btn" onclick="completeAll()">
+                                <i class="fas fa-check-double"></i> Complete All
+                            </button>
+                        </div>
+                    </div>`;
+                    
+                    $('#scheduleContainer').html(html);
+                    
+                    // Animate progress
+                    setTimeout(() => {
+                        $('#scheduleProgress').css('width', '0%');
+                    }, 10);
+                },
+                error: function () {
+                    $('#scheduleContainer').html('<div class="game-card" style="text-align:center;color:red;"><i class="fas fa-exclamation-triangle"></i> Failed to create quest. Try again!</div>');
+                }
+            });
+        }
+        
+        function markComplete(id, button) {
+            if (!$(button).hasClass('done')) {
+                $(button).addClass('done');
+                completedTasks++;
+                
+                // Add XP
+                xp += 10;
+                updateProgress();
+                
+                if (completedTasks === totalTasks) {
+                    showAchievement("Quest Complete!", "You earned a bonus 100 XP");
+                    xp += 100;
+                    setTimeout(() => {
+                        $('.exp').html(`<i class="fas fa-star"></i> ${xp} XP`);
+                    }, 1000);
+                }
+            } else {
+                $(button).removeClass('done');
+                completedTasks--;
+                xp -= 10;
+                updateProgress();
+            }
+        }
+        
+        function completeAll() {
+            $('.complete-btn').not('.done').each(function() {
+                $(this).addClass('done');
+            });
+            
+            completedTasks = totalTasks;
+            xp += 10 * totalTasks;
+            updateProgress();
+            
+            showAchievement("All Tasks Completed!", "You earned a bonus 100 XP");
+            xp += 100;
+            
+            setTimeout(() => {
+                $('.exp').html(`<i class="fas fa-star"></i> ${xp} XP`);
+            }, 1000);
+        }
+        
+        function updateProgress() {
+            const percent = (completedTasks / totalTasks) * 100;
+            $('#scheduleProgress').css('width', percent + '%');
+            $('.exp').html(`<i class="fas fa-star"></i> ${xp} XP`);
+        }
+        
+        function showAchievement(title, desc) {
+            $('#achievement .achievement-title').text(title);
+            $('#achievement .achievement-desc').text(desc);
+            $('#achievement').addClass('show');
+            
+            setTimeout(() => {
+                $('#achievement').removeClass('show');
+            }, 3000);
+        }
+        
+        function getRandomTags() {
+            const tags = ["Focus +10", "Knowledge +5", "Critical Thinking", "Memory Boost", "Skill Building"];
+            return tags[Math.floor(Math.random() * tags.length)];
+        }
+        
+        // Mock data for testing without API
+        
+    </script>
+</body>
+</html>

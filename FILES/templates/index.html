@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyQuest | Gaming-Inspired Learning</title>
+    <style>
+        :root {
+            --primary: #8a2be2;
+            --secondary: #00ffff;
+            --dark: #121212;
+            --light: #f0f0f0;
+            --accent: #ff3860;
+            --gradient: linear-gradient(135deg, var(--primary), #4a00e0);
+            --text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+            --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 10px rgba(138, 43, 226, 0.6);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            background-image: url('/api/placeholder/1600/900');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: -1;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header Styling */
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 2px solid var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            padding: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: var(--text-shadow);
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        /* Navigation Styling */
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Theme Toggle Button */
+        #theme-toggle {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: var(--glow);
+        }
+
+        #theme-toggle:hover {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background: rgba(18, 18, 24, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            backdrop-filter: blur(5px);
+            height: fit-content;
+        }
+
+        .sidebar h2 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-top: 0;
+            border-bottom: 1px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        #notes {
+            width: 100%;
+            height: 300px;
+            background: rgba(30, 30, 40, 0.7);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            padding: 15px;
+            color: var(--light);
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* User Stats Section */
+        .user-stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--primary);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            background: rgba(18, 18, 24, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .main-content h1 {
+            margin-top: 0;
+            font-size: 2.2rem;
+            color: var(--secondary);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            text-shadow: var(--text-shadow);
+        }
+
+        /* Button Styling */
+        button {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--glow);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Input Section Styling */
+        .input-section {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+            background: rgba(30, 30, 40, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--primary);
+        }
+
+        input, select {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--primary);
+            background: rgba(30, 30, 40, 0.9);
+            color: var(--light);
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        /* Video Container Styling */
+        #video-container {
+            width: 100%;
+            height: 400px;
+            margin: 30px 0;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+
+        #video-container::before {
+            content: 'LEARNING ARENA';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--secondary);
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        #video-frame {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Quiz Section Styling */
+        #mcq-section {
+            background: rgba(30, 30, 40, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid var(--primary);
+        }
+
+        #mcq-section h2 {
+            color: var(--secondary);
+            text-align: center;
+            margin-top: 0;
+        }
+
+        #questions {
+            margin: 20px 0;
+        }
+
+        #questions p {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #questions label {
+            display: block;
+            margin: 8px 0;
+            padding: 10px 15px;
+            background: rgba(50, 50, 60, 0.7);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #questions label:hover {
+            background: rgba(138, 43, 226, 0.3);
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--secondary);
+        }
+
+        /* Chatbot Button */
+        .chatbot-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--box-shadow);
+            border: none;
+            cursor: pointer;
+            z-index: 999;
+        }
+
+        .chatbot-btn img {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Featured Courses Section */
+        .featured-courses {
+            margin-top: 40px;
+        }
+
+        .featured-courses h2 {
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .course-card {
+            background: rgba(30, 30, 40, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--primary);
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--glow);
+        }
+
+        .course-img {
+            height: 150px;
+            overflow: hidden;
+        }
+
+        .course-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .course-details {
+            padding: 15px;
+        }
+
+        .course-details h3 {
+            margin-top: 0;
+            color: var(--light);
+        }
+
+        .course-details p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .course-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .course-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+      
+        }
+        
+        .featured-platforms {
+            background-color:#121212;;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .featured-platforms h2 {
+            text-align: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.25rem;
+            color: #2d3748;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .featured-platforms h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #6c5ce7, #00cec9);
+            border-radius: 2px;
+        }
+        
+        .platform-grid {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0.25rem;
+        }
+        
+        .platform-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            cursor: pointer;
+            flex: 0 0 auto;
+            width: 260px;
+            min-width: 260px;
+        }
+        
+        .platform-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .platform-img {
+            height: 120px;
+            overflow: hidden;
+        }
+        
+        .platform-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .platform-card:hover .platform-img img {
+            transform: scale(1.05);
+        }
+        
+        .platform-details {
+            padding: 1rem;
+        }
+        
+        .platform-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
+            color: #2d3748;
+        }
+        
+        .platform-details p {
+            color: #4a5568;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            font-size: 0.85rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 2.4em;
+        }
+        
+        .platform-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #edf2f7;
+            color: #718096;
+            font-size: 0.75rem;
+        }
+        
+        .platform-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .btn-explore {
+            display: inline-block;
+            background: linear-gradient(90deg, #6c5ce7, #00cec9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 1.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 0.75rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 3px 8px rgba(108, 92, 231, 0.2);
+            font-size: 0.8rem;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn-explore:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+        }
+        
+        .ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .ribbon span {
+            position: absolute;
+            display: block;
+            width: 150px;
+            padding: 5px 0;
+            background-color: #3498db;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            color: white;
+            font-size: 0.65rem;
+            text-align: center;
+            right: -25px;
+            top: 20px;
+            transform: rotate(45deg);
+        }
+        
+        @media (max-width: 768px) {
+            .platform-grid {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                padding-bottom: 1rem;
+            }
+            
+            .platform-card {
+                width: 220px;
+                min-width: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Study<span>Quest</span></div>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/teachers">Mentor</a></li>
+                    <li><a href="/quiz">Quiz</a></li>
+                    <li><a href="/track">Learning History</a></li>
+                    <li><a href="/chatbot">Ask Doubt</a></li>
+                </ul>
+            </nav>
+            <button id="theme-toggle">🌙 Toggle Theme</button>
+        </header>
+
+        <!-- 📝 Sidebar (Notes & Stats) -->
+        <aside class="sidebar">
+            <h2>📝 Adventure Journal</h2>
+            <textarea id="notes" placeholder="Record your quest notes here..."></textarea>
+            
+            <div class="user-stats">
+                <h2>⚔️ Player Stats</h2>
+                <div class="stat-item">
+                    <span>Learning XP:</span>
+                    <span>4,250 / 5,000</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%;"></div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Knowledge Mastery:</span>
+                    <span>68%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 68%;"></div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Quests Completed:</span>
+                    <span>24 / 50</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 48%;"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 📚 Main Content -->
+        <main class="main-content">
+            <h1>⚡ Level Up Your Knowledge</h1>
+            
+            <!-- 🔍 Learning Input Section -->
+            <div class="input-section">
+                <input type="text" id="topic" placeholder="Enter Quest Topic" />
+                <select id="language">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Spanish">Spanish</option>
+                </select>
+                <button onclick="fetchPlaylist()">Start Quest</button>
+            </div>
+
+            <!-- 🎥 Video Section -->
+            <div id="video-container">
+                <iframe id="video-frame" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+            <!-- Featured Courses Section -->
+            <div class="container">
+                <div class="featured-platforms">
+                    <h2>🌟 Featured Learning Platforms</h2>
+                    <div class="platform-grid">
+                        <div class="platform-card" onclick="window.location.href='https://nptel.ac.in/'">
+                            <div class="ribbon">
+                                <span>Free Certification</span>
+                            </div>
+                            <div class="platform-img">
+                                <img src="/static/nptel.jpg" alt="NPTEL">
+                            </div>
+                            <div class="platform-details">
+                                <h3>NPTEL</h3>
+                                <p>Access high-quality engineering and science courses from India's top institutes</p>
+                                <div class="platform-stats">
+                                    <span>🎓 500+ Courses</span>
+                                    <span>🌐 IITs & IISc</span>
+                                </div>
+                                <a href="https://nptel.ac.in/" class="btn-explore">Explore NPTEL</a>
+                            </div>
+                        </div>
+                        
+                        <div class="platform-card" onclick="window.location.href='https://www.udemy.com/'">
+                            <div class="platform-img">
+                                <img src="/static/udemylogo.png" alt="Udemy">
+                            </div>
+                            <div class="platform-details">
+                                <h3>Udemy</h3>
+                                <p>Learn any skill with affordable, expert-led video courses for professional growth</p>
+                                <div class="platform-stats">
+                                    <span>🎓 185,000+ Courses</span>
+                                    <span>👨‍🏫 Expert Instructors</span>
+                                </div>
+                                <a href="https://www.udemy.com/" class="btn-explore">Explore Udemy</a>
+                            </div>
+                        </div>
+                        
+                        <div class="platform-card" onclick="window.location.href='https://www.coursera.org/'">
+                            <div class="ribbon">
+                                <span>University Partners</span>
+                            </div>
+                            <div class="platform-img">
+                                <img src="/static/coursera.png" alt="Coursera">
+                            </div>
+                            <div class="platform-details">
+                                <h3>Coursera</h3>
+                                <p>Access world-class education from top universities and companies</p>
+                                <div class="platform-stats">
+                                    <span>🎓 7,000+ Courses</span>
+                                    <span>🏛️ 275+ Partners</span>
+                                </div>
+                                <a href="https://www.coursera.org/" class="btn-explore">Explore Coursera</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 🎯 Quiz Section -->
+            <div id="mcq-section">
+                <h2>🎯 Mastery Earn</h2>
+                <h3>Your Current EXP :{{user_exp}}</h3><br>
+                <h3>Your Current Score :{{user_score}}</h3>
+            </div>
+
+            <div id="feedback"></div>
+        </main>
+    </div>
+
+    <!-- Floating Chatbot Button -->
+     <a href="/chatbot">
+    <button class="chatbot-btn" onclick="openChatbot()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+            <line x1="15" y1="9" x2="15.01" y2="9"></line>
+        </svg>
+    </button></a>
+
+    <script>
+            let selectedVideo = {};  // Stores selected video details
+    let correctAnswers = [];
+
+
+    function onYouTubeIframeAPIReady() {
+        var player = new YT.Player('videoFrame', {
+            events: {
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.ENDED) {
+            fetchQuiz();
+        }
+    }
+
+        // Keep your existing JavaScript functions
+        function fetchPlaylist() {
+            const topic = document.getElementById("topic").value;
+            const language = document.getElementById("language").value;
+
+            fetch("/get_playlist", {
+                method: "POST",
+                body: JSON.stringify({ topic, language }),
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("video-frame").src = data.url;
+            })
+            .catch(error => console.error("Error fetching playlist:", error));
+        }
+        
+
+        function submitAnswers() {
+            let user_answers = [];
+            document.querySelectorAll("#questions input:checked").forEach(input => {
+                user_answers.push(input.value);
+            });
+
+            fetch("/evaluate", {
+                method: "POST",
+                body: JSON.stringify({ user_answers }),
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("feedback").innerHTML = `<p>${data.feedback}</p>`;
+            })
+            .catch(error => console.error("Error submitting answers:", error));
+        }
+        
+        
+        
+        // Theme toggle functionality
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('light-mode');
+            if (document.body.classList.contains('light-mode')) {
+                this.textContent = '☀️ Light Mode';
+                document.documentElement.style.setProperty('--dark', '#f0f0f0');
+                document.documentElement.style.setProperty('--light', '#121212');
+            } else {
+                this.textContent = '🌙 Dark Mode';
+                document.documentElement.style.setProperty('--dark', '#121212');
+                document.documentElement.style.setProperty('--light', '#f0f0f0');
+            }
+        });
+    </script>
+</body>
+</html>

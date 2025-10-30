@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parental Feedback | StudyQuest</title>
+    <style>
+        :root {
+            --primary-color: #7B68EE;
+            --secondary-color: #6A5ACD;
+            --accent-color: #5CDB95;
+            --dark-bg: #F5F5FA;
+            --medium-bg: #FFFFFF;
+            --light-bg: #F0F0F8;
+            --text-light: #FFFFFF;
+            --text-dark: #333333;
+            --success: #5CDB95;
+            --progress-bg: #E0E0F0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-dark);
+            padding: 30px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 650px;
+            width: 100%;
+            margin: auto;
+            background: var(--medium-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        form {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--light-bg);
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            color: var(--text-dark);
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.2);
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23333333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 15px) center;
+            padding-right: 40px;
+        }
+        
+        .rating-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+        
+        .rating-option {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .rating-option input[type="radio"] {
+            display: none;
+        }
+        
+        .rating-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: var(--light-bg);
+            transition: all 0.2s ease;
+        }
+        
+        .rating-option span {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .rating-option p {
+            font-size: 12px;
+            margin: 0;
+        }
+        
+        .rating-option input[type="radio"]:checked + label {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        button {
+            padding: 14px 28px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0,0,0,0.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .success {
+            color: var(--success);
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(92, 219, 149, 0.1);
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .success svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+        
+        .form-header img {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .level-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--light-bg);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary-color);
+        }
+        
+        .level-indicator span {
+            color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .rating-stars {
+                flex-wrap: wrap;
+            }
+            
+            .rating-option {
+                flex-basis: 48%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="level-indicator">
+            <span>📊</span> PARENT INSIGHTS
+        </div>
+        
+        <div class="form-header">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#7B68EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="#7B68EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="#7B68EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h2>Parent Feedback Form</h2>
+        </div>
+        
+        {% if success %}
+        <div class="success">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999" stroke="#5CDB95" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M22 4L12 14.01L9 11.01" stroke="#5CDB95" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Your feedback has been submitted successfully!
+        </div>
+        {% endif %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Parent Username:</label>
+                <input type="text" id="name" name="name" required placeholder="Enter your username">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Contact Email:</label>
+                <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="content_quality">1. How would you rate the quality of the educational content?</label>
+                <select id="content_quality" name="content_quality" required>
+                    <option value="">Select your rating</option>
+                    <option value="Excellent">Excellent</option>
+                    <option value="Good">Good</option>
+                    <option value="Average">Average</option>
+                    <option value="Poor">Needs Improvement</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="engagement">2. How engaged does your child feel with the platform?</label>
+                <select id="engagement" name="engagement" required>
+                    <option value="">Select engagement level</option>
+                    <option value="Very Engaged">Very Engaged</option>
+                    <option value="Somewhat Engaged">Somewhat Engaged</option>
+                    <option value="Neutral">Neutral</option>
+                    <option value="Not Engaged">Not Engaged</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="improvement_suggestion">3. What area needs the most improvement?</label>
+                <select id="improvement_suggestion" name="improvement_suggestion" required>
+                    <option value="">Select an area</option>
+                    <option value="More video explanations">Video Tutorials</option>
+                    <option value="Better practice quizzes">Practice Challenges</option>
+                    <option value="Progress tracking">Progress Tracking</option>
+                    <option value="Parental dashboard">Parent Dashboard</option>
+                </select>
+            </div>
+            
+            <div class="form-group rating-group">
+                <label>4. Overall Rating:</label>
+                <div class="rating-stars">
+                    <div class="rating-option">
+                        <input type="radio" id="star1" name="overall_rating" value="1" required>
+                        <label for="star1">
+                            <span>⭐</span>
+                            <p>Poor</p>
+                        </label>
+                    </div>
+                    <div class="rating-option">
+                        <input type="radio" id="star2" name="overall_rating" value="2">
+                        <label for="star2">
+                            <span>⭐⭐</span>
+                            <p>Fair</p>
+                        </label>
+                    </div>
+                    <div class="rating-option">
+                        <input type="radio" id="star3" name="overall_rating" value="3">
+                        <label for="star3">
+                            <span>⭐⭐⭐</span>
+                            <p>Good</p>
+                        </label>
+                    </div>
+                    <div class="rating-option">
+                        <input type="radio" id="star4" name="overall_rating" value="4">
+                        <label for="star4">
+                            <span>⭐⭐⭐⭐</span>
+                            <p>Very Good</p>
+                        </label>
+                    </div>
+                    <div class="rating-option">
+                        <input type="radio" id="star5" name="overall_rating" value="5">
+                        <label for="star5">
+                            <span>⭐⭐⭐⭐⭐</span>
+                            <p>Excellent</p>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Additional Feedback:</label>
+                <textarea id="message" name="message" rows="4" placeholder="Share your thoughts and suggestions here..."></textarea>
+            </div>
+            
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+</body>
+</html>
